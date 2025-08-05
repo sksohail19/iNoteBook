@@ -1,0 +1,30 @@
+{
+  "name": "inotebook",
+  "version": "1.0.0",
+  "description": "iNoteBook is an application which helps us to list our to-do list and save them in cloud to access them at any time.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "to-do",
+    "list",
+    "cloud",
+    "mongoose",
+    "mongodb",
+    "express",
+    "reactjs",
+    "inotebook"
+  ],
+  "author": "Sohail Shaik",
+  "license": "MIT",
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "express": "^5.1.0",
+    "express-validator": "^7.2.1",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.17.0",
+    "nodemon": "^3.1.10"
+  }
+}
