@@ -3,6 +3,7 @@ const router = express.Router();
 const User = require('../models/UserSchema'); // Assuming you have a User model defined
 const { body, validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
+const fetchUser = require('../middleware/fetchUser'); // Middleware to fetch user from token
 const jwt = require('jsonwebtoken');
 
 const JWT_SECRET = "AgJtUIy@#@!$%&*()_+1234567890"; // Use a secure secret in production
@@ -64,6 +65,17 @@ router.post("/login", [
         };
         const authToken = jwt.sign(data, JWT_SECRET);
         res.json({ authToken, user: { name: user.name, email: user.email } });
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send("Internal Server Error");
+    }
+})
+
+router.post("/getprofile", fetchUser, async (req, res) => {
+    try{
+        const userId = req.user.id;
+        const user = await User.findById(userId).select("-password");
+        res.send(user);
     } catch (error) {
         console.error(error.message);
         res.status(500).send("Internal Server Error");
