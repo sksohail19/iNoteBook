@@ -3,10 +3,13 @@ import { Link } from 'react-router-dom';
 import NotesContext from '../context/NotesContext';
 import axios from 'axios';
 
+
 function Home() {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [tag, setTag] = useState("");
+    const [search, setSearch] = useState("");
+    const [loading, setLoading] = useState(true);
 
     const { notes, setNotes, fetchNotes } = useContext(NotesContext);
     console.log(notes);
@@ -112,24 +115,54 @@ function Home() {
             </form>
             <hr className="my-4 mx-5 hv-100" />
 
+
+
             <h2 className="container text-center">Your Notes</h2>
-            {notes.length === 0 ? (
-                <p className="container text-center">No notes available. Please add some notes.</p>
+
+            <form
+                className="d-flex my-3 w-50 container"
+                role="search"
+                onSubmit={(e) => e.preventDefault()}
+            >
+                <input
+                    className="form-control me-2"
+                    type="search"
+                    placeholder="Search"
+                    aria-label="Search"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                />
+                <button className="btn btn-outline-success" type="submit">
+                    Search
+                </button>
+            </form>
+
+            {(loading && notes.length === 0) ? (
+                <p className="container text-center">
+                    No notes available. Please add some notes.
+                </p>
             ) : (
-                <div className="container d-flex flex-row flex-wrap justify-content-between h-30">
-                    {notes.map((note, index) =>
-                        <div className="card container my-3" style={{ width: "18rem" }}>
-                            <div className="card-body">
-                                <h5 className="card-title ">{notes[index].title}</h5>
-                                <h6 className="card-subtitle mb-2 text-body-secondary">{notes[index].tag}</h6>
-                                <p className="card-text">{notes[index].description}</p>
-                                <Link to="/updatenotes/:id" className="card-link  ">Edit</Link>
-                                <Link to="/deleteNote/:id" className="card-link ">Delete</Link>
+                <div className="container d-flex flex-row flex-wrap justify-content-between">
+                    {notes
+                        .filter(note =>
+                            note.title.toLowerCase().includes(search.toLowerCase()) ||
+                            note.tag.toLowerCase().includes(search.toLowerCase()) ||
+                            note.description.toLowerCase().includes(search.toLowerCase())
+                        )
+                        .map((note) => (
+                            <div className="card container my-3" style={{ width: "18rem" }} key={note._id}>
+                                <div className="card-body">
+                                    <h5 className="card-title">{note.title}</h5>
+                                    <h6 className="card-subtitle mb-2 text-body-secondary">{note.tag}</h6>
+                                    <p className="card-text">{note.description}</p>
+                                    <Link to={`/updatenotes/${note._id}`} className="card-link">Edit</Link>
+                                    <Link to={`/deleteNote/${note._id}`} className="card-link">Delete</Link>
+                                </div>
                             </div>
-                        </div>
-                    )};
+                        ))}
                 </div>
             )}
+
         </>
     )
 }

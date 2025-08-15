@@ -24,8 +24,8 @@ function Navbar() {
     };
     return (
         <>
-            <nav className="navbar navbar-expand-lg bg-body-tertiary">
-                <div className="container-fluid">
+            <nav className="navbar navbar-expand-lg bg-body-tertiary justify-content-center ">
+                <div className="container-fluid container  ">
                     <Link className="navbar-brand" to="/">iNoteBook</Link>
                     <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                         <span className="navbar-toggler-icon"></span>
@@ -37,7 +37,7 @@ function Navbar() {
                             </li>
 
                             <li className="nav-item">
-                                <a className="nav-link" aria-current="page" href="https://sksohail19.github.io/Portfolio/" target="_blank">About</a>
+                                <a className="nav-link" aria-current="page" href="https://sksohail19.github.io/Portfolio/" rel="noreferrer" target="_blank">About</a>
                             </li>
 
                             {!isLoggedIn() && (
@@ -51,11 +51,6 @@ function Navbar() {
                                 </>
                             )}
 
-
-                            <li className="nav-item">
-                                <Link className="nav-link" aria-current="page" to="/contact">Contact</Link>
-                            </li>
-
                             {isLoggedIn() && (
                                 <button
                                     className={`nav-link btn btn-link ${localStorage.getItem("authToken") ? "active" : "disabled"}`}
@@ -66,14 +61,11 @@ function Navbar() {
                                 </button>
                             )}
                         </ul>
-                        <form className="d-flex" role="search">
-                            <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
-                            <button className="btn btn-outline-success" type="submit" onChange={() => handleChange}>Search</button>
-                        </form>
+                        
                     </div>
                 </div>
             </nav>
-            <hr />
+            
         </>
     )
 }
