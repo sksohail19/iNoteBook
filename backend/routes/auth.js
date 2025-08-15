@@ -6,7 +6,7 @@ const bcrypt = require('bcryptjs');
 const fetchUser = require('../middleware/fetchUser'); // Middleware to fetch user from token
 const jwt = require('jsonwebtoken');
 
-const JWT_SECRET = "AgJtUIy@#@!$%&*()_+1234567890"; // Use a secure secret in production
+const JWT_SECRET = process.env.JWT_SECRET; // Use a secure secret in production
 
 router.post('/signup', [
     body('email', 'Enter a valid email').isEmail(),

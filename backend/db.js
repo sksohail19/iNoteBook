@@ -1,7 +1,7 @@
 const mongoose = require("mongoose")
 
 const connectToMongo = () => {
-    mongoose.connect("mongodb://localhost:27017/inotebook", {
+    mongoose.connect(process.env.MONGO_URL, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
     })
