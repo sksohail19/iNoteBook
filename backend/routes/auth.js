@@ -32,7 +32,7 @@ router.post('/signup', [
             }
         };
         const authToken = jwt.sign(data, JWT_SECRET);
-        res.status(201).json({ authToken, user: { name: user.name, email: user.email } });
+        res.status(201).json({ authToken, message: "User created successfully" });
     } catch (error) {
         console.error(error.message);
         res.status(500).send("Internal Server Error");

@@ -30,6 +30,23 @@ router.post("/newNotes", fetchUser, [
     }
 });
 
+router.get("/getNote/:id", fetchUser, async (req, res) => {
+    try {
+        const note = await NoteBook.findById(req.params.id);
+        if (!note) {
+            return res.status(404).send("Note not found");
+        }
+        // Check if the user owns the note
+        if (note.user.toString() !== req.user.id) {
+            return res.status(401).send("Not Allowed");
+        }
+        res.status(200).json(note);
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send("Internal Server Error");
+    }
+});
+
 router.get("/fetchAllNotes", fetchUser, async (req, res) => {
     try {
         const notes = await NoteBook.find({ user: req.user.id });

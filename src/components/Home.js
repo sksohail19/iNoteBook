@@ -1,23 +1,93 @@
 import React, { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 import NotesContext from '../context/NotesContext';
+import axios from 'axios';
 
 function Home() {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [tag, setTag] = useState("");
 
-    const { notes } = useContext(NotesContext);
+    const { notes, setNotes, fetchNotes } = useContext(NotesContext);
     console.log(notes);
 
-    return (    
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            if (!!localStorage.getItem("authToken")) {
+                const res = await axios.post("http://localhost:5000/api/notes/newNotes", {
+                    title,
+                    description,
+                    tag
+                }, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'authToken': localStorage.getItem("authToken")
+                    }
+                });
+                if (res.status === 201) {
+                    alert("Note added successfully!");
+                    window.location.reload();
+                } else {
+                    alert("Failed to add note: " + res.data.message);
+                }
+            } else {
+                alert("Please login to add notes");
+                return;
+            }
+        } catch (error) {
+            if (error.response) {
+                alert(`Login failed: ${error.response.data.message}`);
+            } else {
+                alert("Network error. Please try again.");
+            }
+            console.error("Error during login:", error);
+        }
+    }
+
+    const handleReset = () => {
+        setTitle("");
+        setDescription("");
+        setTag("");
+    }
+
+    const handleDelete = async (id) => {
+        try {
+            if (!!localStorage.getItem("authToken")) {
+                const res = await axios.delete(`http://localhost:5000/api/notes/deleteNote/${id}`, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'authToken': localStorage.getItem("authToken")
+                    }
+                });
+                if (res.status === 200) {
+                    alert("Note deleted successfully!");
+                    fetchNotes(); // Refresh notes after deletion
+                } else {
+                    alert("Failed to delete note: " + res.data.message);
+                }
+            } else {
+                alert("Please login to delete notes");
+                return;
+            }
+        } catch (error) {
+            if (error.response) {
+                alert(`Delete failed: ${error.response.data.message}`);
+            } else {
+                alert("Network error. Please try again.");
+            }
+            console.error("Error during delete:", error);
+        }
+    }
+
+    return (
         <>
             <h1 className="container my-3 ">Welcome to iNoteBook</h1>
             <p className="container">Here you can add your notes and manage them easily.</p>
             <hr className="my-4 mx-5 hv-100" />
             <h2 className="container text-center">Add a Note</h2>
             <p className="container text-center">Add your notes below:</p>
-            <form className="container my-3" >
+            <form className="container my-3" onSubmit={handleSubmit} onReset={handleReset}>
                 <div className="mb-3">
                     <label for="exampleInputEmail1" className="form-label"><strong>Title</strong></label>
                     <input type="text" className="form-control" id="title" aria-describedby="title" value={title} onChange={(e) => { setTitle(e.target.value) }} />
@@ -43,19 +113,23 @@ function Home() {
             <hr className="my-4 mx-5 hv-100" />
 
             <h2 className="container text-center">Your Notes</h2>
-            <div className="container d-flex flex-row flex-wrap justify-content-between h-30">
-                {notes.map((note, index) =>
-                    <div className="card container my-3" style={{ width: "18rem" }}>
-                        <div className="card-body">
-                            <h5 className="card-title">{notes[index].title}</h5>
-                            <h6 className="card-subtitle mb-2 text-body-secondary">{notes[index].tag}</h6>
-                            <p className="card-text">{notes[index].description}</p>
-                            <Link to="/updatenotes/:id" className="card-link  ">Edit</Link>
-                            <Link to="/deleteNote/:id" className="card-link ">Delete</Link>
+            {notes.length === 0 ? (
+                <p className="container text-center">No notes available. Please add some notes.</p>
+            ) : (
+                <div className="container d-flex flex-row flex-wrap justify-content-between h-30">
+                    {notes.map((note, index) =>
+                        <div className="card container my-3" style={{ width: "18rem" }}>
+                            <div className="card-body">
+                                <h5 className="card-title ">{notes[index].title}</h5>
+                                <h6 className="card-subtitle mb-2 text-body-secondary">{notes[index].tag}</h6>
+                                <p className="card-text">{notes[index].description}</p>
+                                <Link to="/updatenotes/:id" className="card-link  ">Edit</Link>
+                                <Link to="/deleteNote/:id" className="card-link ">Delete</Link>
+                            </div>
                         </div>
-                    </div>
-                )};
-            </div>
+                    )};
+                </div>
+            )}
         </>
     )
 }
